@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maket Otobüs Standı — Proje</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --steel:   #1c2938;
+      --iron:    #2e3f52;
+      --sky:     #a8c5da;
+      --mist:    #d6e8f2;
+      --accent:  #e8a020;
+      --white:   #f4f7fa;
+      --text:    #e8edf2;
+      --sub:     #8fa7bb;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--steel);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── HERO ── */
+    header {
+      position: relative;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: clamp(40px, 8vw, 100px) clamp(24px, 10vw, 140px);
+      overflow: hidden;
+    }
+
+    header::after {
+      content: '';
+      position: absolute; right: -80px; top: 50%;
+      transform: translateY(-50%);
+      width: clamp(280px, 45vw, 700px);
+      height: clamp(280px, 45vw, 700px);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,197,218,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 2px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp .6s .2s forwards;
+    }
+
+    header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(56px, 11vw, 148px);
+      line-height: .93;
+      letter-spacing: .01em;
+      color: var(--white);
+      max-width: 14ch;
+      opacity: 0;
+      animation: fadeUp .7s .35s forwards;
+    }
+
+    header h1 span { color: var(--accent); }
+
+    .hero-sub {
+      margin-top: 28px;
+      max-width: 52ch;
+      font-size: clamp(15px, 1.6vw, 17px);
+      line-height: 1.75;
+      color: var(--sub);
+      opacity: 0;
+      animation: fadeUp .7s .5s forwards;
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 36px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--sub);
+      animation: pulse 2s infinite;
+    }
+    .scroll-hint::after {
+      content: '';
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--sub), transparent);
+    }
+
+    /* ── SECTION BASE ── */
+    section {
+      position: relative;
+      padding: clamp(64px, 10vw, 120px) clamp(24px, 10vw, 140px);
+    }
+
+    .label {
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+    }
+
+    /* ── ABOUT ── */
+    #hakkinda {
+      background: var(--iron);
+      clip-path: polygon(0 3%, 100% 0, 100% 97%, 0 100%);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    @media(max-width:700px){ .about-grid{ grid-template-columns:1fr; gap:40px; } }
+
+    .about-grid h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 5vw, 64px);
+      line-height: 1;
+      color: var(--white);
+    }
+
+    .about-grid p {
+      font-size: 16px; line-height: 1.8; color: var(--sub);
+      margin-top: 20px;
+    }
+
+    /* stats */
+    .stats { display: flex; gap: 40px; margin-top: 48px; flex-wrap: wrap; }
+    .stat { display: flex; flex-direction: column; gap: 4px; }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 44px; color: var(--accent); line-height: 1;
+    }
+    .stat-label { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--sub); }
+
+    /* material chip */
+    .material-chip {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(168,197,218,.07);
+      border: 1px solid rgba(168,197,218,.18);
+      border-radius: 4px;
+      padding: 14px 22px;
+      margin-top: 32px;
+    }
+    .chip-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .material-chip p { font-size: 14px; color: var(--sky); }
+
+    /* ── DOWNLOAD ── */
+    #indir {
+      text-align: center;
+    }
+
+    #indir h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 5vw, 64px);
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    #indir p {
+      max-width: 52ch; margin: 0 auto 48px;
+      color: var(--sub); font-size: 16px; line-height: 1.75;
+    }
+
+    .btn-download {
+      display: inline-flex; align-items: center; gap: 14px;
+      background: var(--accent);
+      color: #1a1200;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 500;
+      letter-spacing: .04em;
+      padding: 18px 40px;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      position: relative; overflow: hidden;
+    }
+    .btn-download::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,.12);
+      transform: translateX(-110%) skewX(-15deg);
+      transition: transform .4s;
+    }
+    .btn-download:hover::before { transform: translateX(110%) skewX(-15deg); }
+    .btn-download:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(232,160,32,.3); }
+
+    .btn-download svg { width: 20px; height: 20px; }
+
+    /* ── DIVIDER LINE ── */
+    .divider {
+      width: 60px; height: 2px; background: var(--accent);
+      margin: 0 auto 48px;
+    }
+
+    /* ── TEAM ── */
+    #ekip {
+      background: var(--iron);
+      clip-path: polygon(0 3%, 100% 0, 100% 100%, 0 100%);
+    }
+
+    #ekip .section-head {
+      text-align: center; margin-bottom: 64px;
+    }
+    #ekip .section-head h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 6vw, 72px);
+      color: var(--white);
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 900px; margin: 0 auto;
+    }
+
+    .member-card {
+      background: rgba(28,41,56,.6);
+      border: 1px solid rgba(168,197,218,.1);
+      border-radius: 6px;
+      padding: 28px 24px;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+      position: relative; overflow: hidden;
+    }
+    .member-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--accent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s;
+    }
+    .member-card:hover { transform: translateY(-4px); border-color: rgba(168,197,218,.25); box-shadow: 0 16px 40px rgba(0,0,0,.3); }
+    .member-card:hover::before { transform: scaleX(1); }
+
+    .member-initial {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(232,160,32,.15);
+      border: 1px solid rgba(232,160,32,.35);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px; color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .member-name {
+      font-size: 16px; font-weight: 500; color: var(--white);
+      margin-bottom: 8px;
+    }
+    .member-role {
+      font-size: 13px; color: var(--sub); line-height: 1.6;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid rgba(168,197,218,.08);
+      font-size: 12px; color: rgba(143,167,187,.4);
+      letter-spacing: .08em;
+    }
+
+    /* ── KEYFRAMES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%,100% { opacity: .5; } 50% { opacity: 1; }
+    }
+
+    /* ── REVEAL ON SCROLL ── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s, transform .7s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<header>
+  <span class="badge">Öğrenci Tasarım Projesi</span>
+  <h1>Maket<br>Otobüs<br><span>Standı</span></h1>
+  <p class="hero-sub">
+    Maket otobüsü sabit ve dengeli biçimde sergilemek için tasarlanmış, gerçek metalden imal edilecek özel stand projesi.
+    Tasarımdan 3D modellemeye, sunumdan üretime uzanan eksiksiz bir sürecin ürünü.
+  </p>
+  <div class="scroll-hint">Keşfet</div>
+</header>
+
+<!-- ══════════ HAKKINDA ══════════ -->
+<section id="hakkinda">
+  <div class="about-grid">
+    <div class="reveal">
+      <p class="label">Proje Hakkında</p>
+      <h2>Tasarım<br>Felsefesi</h2>
+      <div class="material-chip">
+        <span class="chip-dot"></span>
+        <p>Gerçek metal kullanılarak imal edilecektir.</p>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:.15s">
+      <p style="font-size:16px;line-height:1.85;color:var(--sub);margin-top:48px">
+        Bu proje, maket otobüsü güvenli ve estetik bir şekilde sergilemek amacıyla
+        tasarlanmış özel bir stand çalışmasıdır. Stand; maket otobüsü üzerinde
+        sabit tutacak şekilde tasarlanmış olup gerçeğe uygun oranlar ve dikkatli
+        mühendislik hesaplarıyla şekillendirilmiştir.
+      </p>
+      <p style="font-size:16px;line-height:1.85;color:var(--sub);margin-top:20px">
+        Dijital 3D modelden fiziksel üretime kadar tüm aşamalar ekip tarafından
+        yürütülmüş; metal işçiliğiyle hayat bulacak stand sadelik, denge
+        ve işlevsellik ilkeleri üzerine inşa edilmiştir.
+      </p>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-num">5</span>
+          <span class="stat-label">Kişilik Ekip</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">3D</span>
+          <span class="stat-label">Dijital Model</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">Metal</span>
+          <span class="stat-label">Üretim Malzemesi</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ İNDİR ══════════ -->
+<section id="indir">
+  <p class="label reveal">3D Dosya</p>
+  <h2 class="reveal" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,64px);color:var(--white);margin-bottom:16px">
+    3D Çizimi İndir
+  </h2>
+  <p class="reveal" style="max-width:52ch;margin:0 auto 48px;color:var(--sub);font-size:16px;line-height:1.75">
+    Standın tüm detaylarını içeren 3D dijital modelini aşağıdaki bağlantıdan
+    indirebilirsiniz. Dosya Google Drive üzerinden paylaşılmaktadır.
+  </p>
+  <div class="divider reveal"></div>
+  <div class="reveal">
+    <a
+      href="https://drive.google.com/drive/folders/YOUR_FOLDER_ID"
+      target="_blank"
+      rel="noopener"
+      class="btn-download"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      3D Dosyayı İndir
+    </a>
+  </div>
+</section>
+
+<!-- ══════════ EKİP ══════════ -->
+<section id="ekip">
+  <div class="section-head reveal">
+    <p class="label">Ekibimiz</p>
+    <h2>Kim Ne Yaptı?</h2>
+  </div>
+
+  <div class="team-grid">
+
+    <div class="member-card reveal">
+      <div class="member-initial">EY</div>
+      <p class="member-name">Eren Yavuz</p>
+      <p class="member-role">Web Tasarım · Parça Tasarım</p>
+    </div>
+
+    <div class="member-card reveal" style="transition-delay:.08s">
+      <div class="member-initial">YA</div>
+      <p class="member-name">Yiğit Alp Çelik</p>
+      <p class="member-role">Parçayı 3D Ortama Aktarma · Parça Tasarım</p>
+    </div>
+
+    <div class="member-card reveal" style="transition-delay:.16s">
+      <div class="member-initial">BE</div>
+      <p class="member-name">Berat Eren Doğan</p>
+      <p class="member-role">PowerPoint Sunumu</p>
+    </div>
+
+    <div class="member-card reveal" style="transition-delay:.24s">
+      <div class="member-initial">KT</div>
+      <p class="member-name">Kerem Tunca</p>
+      <p class="member-role">Sözcü</p>
+    </div>
+
+    <div class="member-card reveal" style="transition-delay:.32s">
+      <div class="member-initial">YÇ</div>
+      <p class="member-name">Yahya Çınar Cesur</p>
+      <p class="member-role">Sözcü</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  © 2025 — Maket Otobüs Standı Projesi &nbsp;·&nbsp; Tüm hakları saklıdır.
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
